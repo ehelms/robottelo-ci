@@ -1,0 +1,4 @@
+- job:
+    name: satellite-release-rhel7
+    project-type: workflow
+    dsl: !include-raw: workflows/releaseSatelliteWorkflow.groovy
