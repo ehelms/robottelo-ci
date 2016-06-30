@@ -1,0 +1,4 @@
+- builder:
+    name: fixture_file
+    builders:
+      - shell: !include-raw: scripts/puppet_fixture_file.sh

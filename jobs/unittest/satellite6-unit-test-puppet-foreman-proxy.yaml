@@ -25,6 +25,7 @@
       - gitlab_build_on_change
     builders:
       - merge_request
+      - fixture_file
       - test_puppet_plugins
     publishers:
       - gemset_cleanup
