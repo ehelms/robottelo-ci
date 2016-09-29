@@ -66,15 +66,29 @@ class ContentViewCompare
     to_repositories = find_repositories(to_version)
 
     reports = from_repositories.collect do |index, repo|
-      from_packages = find_packages(from_version, repo['ID'])
-      to_packages = find_packages(to_version, to_repositories[index]['ID']).collect { |package| package['Filename'] }
+      puts "Comparing packages for #{repo['Name']}"
 
-      new_packages = from_packages.select do |package|
-        !to_packages.include?(package['Filename'])
+      to_repository = to_repositories.select { |index, to_repo| to_repo['Label'] == repo['Label'] }
+      to_repository = to_repository[to_repository.keys.first]
+
+      from_packages = find_packages(from_version, repo['ID'])
+
+      if to_repository.nil?
+        new_packages = from_packages
+      else
+        to_packages = find_packages(to_version, to_repository['ID']).collect { |package| package['Filename'] }
+
+        puts "From packages length #{from_packages.length}"
+        puts "To packages length #{to_packages.length}"
+
+        new_packages = from_packages.select do |package|
+          !to_packages.include?(package['Filename'])
+        end
+
+        puts "New packages length #{new_packages.length}"
       end
 
       report = []
-
       new_packages.each do |package|
         uri = URI("#{@config['server']}/katello/api/v2/packages/#{package['ID']}")
         http = Net::HTTP.new(uri.host, uri.port)
@@ -89,7 +103,7 @@ class ContentViewCompare
         report << {"package" => package['Filename'], "sourcerpm" => response['sourcerpm']}
       end
 
-      report = {"#{repo['Name']}" => {'packages' => report}}
+      report = {"repository" => "#{repo['Name']}", 'packages' => report}
     end
 
     File.open("package_report_#{@config['content_view'].gsub(' ', '_')}.yaml", 'w') do |file|
