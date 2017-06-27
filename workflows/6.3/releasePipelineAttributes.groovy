@@ -9,7 +9,8 @@ def satellite_version = '6.3.0'
 def products = [
     'Satellite 6.3 Composes',
     'Satellite Capsule 6.3 Composes',
-    'Satellite Tools 6.3 Composes'
+    'Satellite Tools 6.3 Composes',
+    'Satellite Puppet 4 6.3 Composes'
 ]
 
 def content_views = [
